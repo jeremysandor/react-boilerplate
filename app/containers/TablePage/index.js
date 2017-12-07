@@ -25,23 +25,25 @@ import Section from './Section';
 import messages from './messages';
 import { loadRepos } from '../App/actions';
 import { changeUsername } from './actions';
+import { changeAwayTeam } from './actions';
 import { makeSelectUsername } from './selectors';
+import { makeSelectAwayTeam } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
-export class HomePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
+export class TablePage extends React.PureComponent { // eslint-disable-line react/prefer-stateless-function
   /**
    * when initial state username is not null, submit the form to load repos
    */
   componentDidMount() {
-    // console.log('props', this.props)
+    console.log('componentDidMount props', this.props)
     if (this.props.username && this.props.username.trim().length > 0) {
       this.props.onSubmitForm();
     }
   }
 
   render() {
-    console.log('HOME props', this.props)
+    console.log('TABLE PROPS', this.props)
     const { loading, error, repos } = this.props;
     const reposListProps = {
       loading,
@@ -51,25 +53,24 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
 
     // console.log('reposListProps', reposListProps)
 
+    
+
     return (
       <article>
         <Helmet>
-          <title>Home Page</title>
+          <title>Table Page</title>
           <meta name="description" content="A React.js Boilerplate application homepage" />
         </Helmet>
         <div>
           <CenteredSection>
             <H2>
-              <FormattedMessage {...messages.startProjectHeader} />
+              Really
             </H2>
             <p>
-              <FormattedMessage {...messages.startProjectMessage} />
+              Simple
             </p>
           </CenteredSection>
           <Section>
-            <H2>
-              <FormattedMessage {...messages.trymeHeader} />
-            </H2>
             <Form onSubmit={this.props.onSubmitForm}>
               <label htmlFor="username">
                 <FormattedMessage {...messages.trymeMessage} />
@@ -83,7 +84,18 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
                   value={this.props.username}
                   onChange={this.props.onChangeUsername}
                 />
+                
               </label>
+              <label htmlFor="awayTeam">
+                <Input
+                  id="awayTeam"
+                  type="text"
+                  placeholder="COLO"
+                  value={this.props.awayTeam}
+                  onChange={this.props.onChangeAwayTeam}
+                />
+              </label>
+              <input type="submit" />
             </Form>
             <ReposList {...reposListProps} />
           </Section>
@@ -93,7 +105,7 @@ export class HomePage extends React.PureComponent { // eslint-disable-line react
   }
 }
 
-HomePage.propTypes = {
+TablePage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([
     PropTypes.object,
@@ -105,14 +117,17 @@ HomePage.propTypes = {
   ]),
   onSubmitForm: PropTypes.func,
   username: PropTypes.string,
+  awayTeam: PropTypes.string,
   onChangeUsername: PropTypes.func,
+  onChangeAwayTeam: PropTypes.func,
 };
 
 export function mapDispatchToProps(dispatch) {
   return {
+    onChangeAwayTeam: (evt) => dispatch(changeAwayTeam(evt.target.value)),
     onChangeUsername: (evt) => dispatch(changeUsername(evt.target.value)),
     onSubmitForm: (evt) => {
-      console.log('onSubmitForm');
+      console.log('hey');
       if (evt !== undefined && evt.preventDefault) evt.preventDefault();
       dispatch(loadRepos());
     },
@@ -122,6 +137,7 @@ export function mapDispatchToProps(dispatch) {
 const mapStateToProps = createStructuredSelector({
   repos: makeSelectRepos(),
   username: makeSelectUsername(),
+  awayTeam: makeSelectAwayTeam(),
   loading: makeSelectLoading(),
   error: makeSelectError(),
 });
@@ -135,4 +151,4 @@ export default compose(
   withReducer,
   withSaga,
   withConnect,
-)(HomePage);
+)(TablePage);
